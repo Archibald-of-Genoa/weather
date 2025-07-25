@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import WeatherCard from "./WeatherCard";
+import type { Forecast, ForecastData } from "../types";
+
+
 
 const SearchBox = () => {
-    const [city, setCity] = useState("Москва");
-    const [longitude, setLongitude] = useState(0);
-    const [latitude, setLatitude] = useState(0)
+    const [city, setCity] = useState("");
+    const [longitude, setLongitude] = useState<number | null>(null);
+    const [latitude, setLatitude] = useState<number | null>(null);
+    const [forecastData, setForecastData] = useState<ForecastData | null>(null);
 
     const getLocation = () => {
         if ("geolocation" in navigator) {
@@ -11,73 +16,88 @@ const SearchBox = () => {
                 (position) => {
                     const { coords } = position;
                     setLongitude(coords.longitude);
-                    setLatitude(coords.latitude)
-                    console.log(coords.longitude, coords.latitude)
+                    setLatitude(coords.latitude);
+                    console.log(coords.longitude, coords.latitude);
                 },
                 (error) => {
-                    console.error(error);
-                    alert("Ошибка при получении геопозиции");
+                    console.log("Геолокация не определена", error);
                 }
             );
-
-            
         } else {
             alert("Геопозиция не определена");
         }
     };
 
-    async function getForecast() {
+    useEffect(() => getLocation(), []);
+
+    useEffect(() => {
+        if (latitude === null || longitude === null) return;
+
+        const fetchForecast = () => {
+            getForecast({
+                lat: latitude.toString(),
+                lon: longitude.toString(),
+            });
+        };
+        fetchForecast();
+    }, [latitude, longitude]);
+
+    async function getForecast({ city, lat, lon }: Forecast) {
         const params = new URLSearchParams({
-            lat: latitude.toString(),
-            lon: longitude.toString(),
-            appid: import.meta.env.VITE_OPENWEATHER_API
+            appid: import.meta.env.VITE_OPENWEATHER_API,
+            units: "metric",
+            lang: "ru",
         });
 
-        const url = `https://api.openweathermap.org/data/2.5/weather?${params.toString()}`
+        if (city) {
+            params.append("q", city);
+        } else if (lat && lon) {
+            params.append("lat", lat);
+            params.append("lon", lon);
+        }
+
+        const url = `https://api.openweathermap.org/data/2.5/weather?${params.toString()}`;
 
         try {
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
-
             const json = await response.json();
             console.log(json);
+            setForecastData(json);
         } catch (e) {
             console.error((e as Error).message);
         }
     }
 
-    // async function getData() {
-    //     const url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=5&appid=${
-    //         import.meta.env.VITE_OPENWEATHER_API
-    //     }`;
-    //     try {
-    //         const response = await fetch(url);
-    //         if (!response.ok) {
-    //             throw new Error(`Response status: ${response.status}`);
-    //         }
-
-    //         const json = await response.json();
-    //         console.log(json);
-    //     } catch (e) {
-    //         console.error((e as Error).message);
-    //     }
-    // }
-
     return (
-        <div>
-            <h1>{city}</h1>
-            <p>{longitude}</p>
-            <p>{latitude}</p>
-            <input
-                type="text"
-                placeholder="Введите город"
-                value={city}
-                onChange={(event) => setCity(event.target.value)}
-            />
-            <button onClick={getLocation}>Получить координаты</button>
-            <button onClick={getForecast} >Получить местный прогноз</button>
+        <div className="">
+            <div className="">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        getForecast({ city });
+                    }}
+                >
+                    <input
+                        className=""
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Enter city"
+                    />
+                    <button className="cursor-pointer" type="submit">
+                        Get Forecast
+                    </button>
+                </form>
+                <button className="cursor-pointer" onClick={getLocation}>
+                    Получить координаты
+                </button>
+                {forecastData && (
+                    <WeatherCard data={forecastData}/>
+                )}
+            </div>
         </div>
     );
 };
