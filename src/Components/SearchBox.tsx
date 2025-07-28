@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import WeatherCard from "./WeatherCard";
 import type { Forecast, ForecastData } from "../types";
 
-
-
 const SearchBox = () => {
     const [city, setCity] = useState("");
     const [longitude, setLongitude] = useState<number | null>(null);
@@ -42,7 +40,7 @@ const SearchBox = () => {
         fetchForecast();
     }, [latitude, longitude]);
 
-    async function getForecast({ city, lat, lon }: Forecast) {
+    async function getForecast({ city, lat, lon, isForecast, cnt }: Forecast) {
         const params = new URLSearchParams({
             appid: import.meta.env.VITE_OPENWEATHER_API,
             units: "metric",
@@ -56,16 +54,23 @@ const SearchBox = () => {
             params.append("lon", lon);
         }
 
-        const url = `https://api.openweathermap.org/data/2.5/weather?${params.toString()}`;
+        if (cnt) {
+            params.append("cnt", cnt);
+        } 
+
+        const endpoint = isForecast ? "forecast" : "weather";
+        const url = `https://api.openweathermap.org/data/2.5/${endpoint}?${params.toString()}`;
 
         try {
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
+
             const json = await response.json();
-            console.log(json);
             setForecastData(json);
+            console.log(url)
+            console.log(json)
         } catch (e) {
             console.error((e as Error).message);
         }
@@ -87,16 +92,26 @@ const SearchBox = () => {
                         onChange={(e) => setCity(e.target.value)}
                         placeholder="Enter city"
                     />
-                    <button className="cursor-pointer" type="submit">
-                        Get Forecast
+                    <button className="cursor-pointer border" type="submit">
+                        Прогноз на сегодня
                     </button>
                 </form>
-                <button className="cursor-pointer" onClick={getLocation}>
+                <button className="cursor-pointer border" onClick={getLocation}>
                     Получить координаты
                 </button>
-                {forecastData && (
-                    <WeatherCard data={forecastData}/>
-                )}
+                <button
+                    onClick={() =>
+                        getForecast({
+                            lat: latitude?.toString(),
+                            lon: longitude?.toString(),
+                            isForecast: true,
+                            cnt: "5"
+                        })
+                    }
+                >
+                    Прогноз на 5 дней
+                </button>
+                {forecastData && <WeatherCard data={forecastData} />}
             </div>
         </div>
     );
