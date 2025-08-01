@@ -105,7 +105,7 @@ const SearchBox = () => {
                             lat: latitude?.toString(),
                             lon: longitude?.toString(),
                             isForecast: true,
-                            cnt: "5"
+                            cnt: "40"
                         })
                     }
                 >

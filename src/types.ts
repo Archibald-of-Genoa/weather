@@ -6,7 +6,7 @@ export type Forecast = {
     cnt?: string | null
 };
 
-export type ForecastData = {
+export type WeatherItem = {
     main: {
         temp: number;
         feels_like: number;
@@ -21,8 +21,23 @@ export type ForecastData = {
     wind: {
         speed: number;
     };
-    rain?: {
-        "1h"?: number;
+    dt_txt?: string;
+};
+
+export type ForecastData = WeatherItem & {
+    list?: WeatherItem[];
+    cnt?: number;
+    cod?: string;
+    message?: number;
+    city?: {
+        id: number;
+        name: string;
+        coord: {
+            lat: number;
+            lon: number;
+        };
+        country: string;
+        population: number;
     };
 };
 
