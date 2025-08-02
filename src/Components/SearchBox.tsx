@@ -40,7 +40,7 @@ const SearchBox = () => {
         fetchForecast();
     }, [latitude, longitude]);
 
-    async function getForecast({ city, lat, lon, isForecast, cnt }: Forecast) {
+    async function getForecast({ city, lat, lon, isForecast }: Forecast) {
         const params = new URLSearchParams({
             appid: import.meta.env.VITE_OPENWEATHER_API,
             units: "metric",
@@ -53,10 +53,6 @@ const SearchBox = () => {
             params.append("lat", lat);
             params.append("lon", lon);
         }
-
-        if (cnt) {
-            params.append("cnt", cnt);
-        } 
 
         const endpoint = isForecast ? "forecast" : "weather";
         const url = `https://api.openweathermap.org/data/2.5/${endpoint}?${params.toString()}`;
@@ -99,13 +95,12 @@ const SearchBox = () => {
                 <button className="cursor-pointer border" onClick={getLocation}>
                     Получить координаты
                 </button>
-                <button
+                <button className="cursor-pointer border"
                     onClick={() =>
                         getForecast({
                             lat: latitude?.toString(),
                             lon: longitude?.toString(),
                             isForecast: true,
-                            cnt: "40"
                         })
                     }
                 >

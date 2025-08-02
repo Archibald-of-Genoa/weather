@@ -3,7 +3,6 @@ export type Forecast = {
     lon?: string | null;
     city?: string;
     isForecast?: boolean;
-    cnt?: string | null
 };
 
 export type WeatherItem = {
@@ -26,7 +25,6 @@ export type WeatherItem = {
 
 export type ForecastData = WeatherItem & {
     list?: WeatherItem[];
-    cnt?: number;
     cod?: string;
     message?: number;
     city?: {
