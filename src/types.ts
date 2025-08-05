@@ -3,7 +3,6 @@ export type Forecast = {
     lon?: string | null;
     city?: string;
     isForecast?: boolean;
-    cnt?: string | null
 };
 
 export type WeatherItem = {
