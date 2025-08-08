@@ -14,6 +14,7 @@ export type WeatherItem = {
         temp_max: number;
         pressure: number;
     };
+    name: string;
     weather: Array<{
         description: string;
     }>;

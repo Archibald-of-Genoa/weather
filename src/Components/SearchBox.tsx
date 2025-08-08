@@ -44,7 +44,7 @@ const SearchBox = () => {
         const params = new URLSearchParams({
             appid: import.meta.env.VITE_OPENWEATHER_API,
             units: "metric",
-            lang: "ru",
+            lang: "en",
         });
 
         if (city) {

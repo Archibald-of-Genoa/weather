@@ -15,6 +15,7 @@ const WeatherCard = ({ data }: WeatherDataProps) => {
 
         return (
             <div className="space-y-6">
+                <h3 className="text-xl font-bold text-orange-800 mb-6 text-center"> The weather forecast for {data.city?.name} in the next 5 days </h3>
                 {Object.entries(groupedByDate).map(([date, items]) => (
                     <div key={date} className="bg-gradient-to-r from-orange-200/60 to-amber-200/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
                         <h3 className="text-xl font-bold text-orange-800 mb-6 text-center">
@@ -70,7 +71,7 @@ const WeatherCard = ({ data }: WeatherDataProps) => {
     return (
         <div className="bg-gradient-to-r from-orange-200/80 to-amber-200/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
             <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-orange-800 mb-2">Current Weather</h2>
+                <h2 className="text-2xl font-bold text-orange-800 mb-2">Current weather in {data.name}</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
