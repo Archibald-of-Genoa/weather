@@ -96,8 +96,6 @@ const SearchBox = () => {
 
             const json = await response.json();
             setForecastData(json);
-            console.log(url);
-            console.log(json);
         } catch (e) {
             console.error((e as Error).message);
         }
