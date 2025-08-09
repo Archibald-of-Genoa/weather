@@ -1,0 +1,55 @@
+export type Forecast = {
+    lat?: string | null;
+    lon?: string | null;
+    city?: string;
+    isForecast?: boolean;
+};
+
+export type WeatherItem = {
+    main: {
+        temp: number;
+        feels_like: number;
+        humidity: number;
+        temp_min: number;
+        temp_max: number;
+        pressure: number;
+    };
+    name: string;
+    weather: Array<{
+        description: string;
+    }>;
+    wind: {
+        speed: number;
+    };
+    dt_txt?: string;
+};
+
+export type ForecastData = WeatherItem & {
+    list?: WeatherItem[];
+    cnt?: number;
+    cod?: string;
+    message?: number;
+    city?: {
+        id: number;
+        name: string;
+        coord: {
+            lat: number;
+            lon: number;
+        };
+        country: string;
+        population: number;
+    };
+};
+
+export type WeatherDataProps = {
+    data: ForecastData;
+};
+
+export type CityGeoData = {
+    name: string;
+    local_names?: { [key: string]: string };
+    lat: number;
+    lon: number;
+    country: string;
+    state?: string;
+};
